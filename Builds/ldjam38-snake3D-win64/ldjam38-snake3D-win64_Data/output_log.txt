@@ -15,22 +15,22 @@ Platform assembly: C:\Users\Harry\Documents\Programming\Unity Projects\Snake3D\B
 Loading C:\Users\Harry\Documents\Programming\Unity Projects\Snake3D\Builds\ldjam38-snake3D-win64\ldjam38-snake3D-win64_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
 Platform assembly: C:\Users\Harry\Documents\Programming\Unity Projects\Snake3D\Builds\ldjam38-snake3D-win64\ldjam38-snake3D-win64_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
 Loading C:\Users\Harry\Documents\Programming\Unity Projects\Snake3D\Builds\ldjam38-snake3D-win64\ldjam38-snake3D-win64_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
-- Completed reload, in  0.027 seconds
+- Completed reload, in  0.039 seconds
 Platform assembly: C:\Users\Harry\Documents\Programming\Unity Projects\Snake3D\Builds\ldjam38-snake3D-win64\ldjam38-snake3D-win64_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\Harry\Documents\Programming\Unity Projects\Snake3D\Builds\ldjam38-snake3D-win64\ldjam38-snake3D-win64_Data\Managed\System.dll (this message is harmless)
 desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
-UnloadTime: 2.180180 ms
+UnloadTime: 1.859012 ms
 Setting up 2 worker threads for Enlighten.
-  Thread -> id: b64 -> priority: 1 
-  Thread -> id: 1afc -> priority: 1 
+  Thread -> id: 12b0 -> priority: 1 
+  Thread -> id: 2c48 -> priority: 1 
 Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 5.282811 ms
+UnloadTime: 5.290082 ms
 
-Unloading 5 unused Assets to reduce memory usage. Loaded Objects now: 12886.
-Total: 5.382883 ms (FindLiveObjects: 0.835636 ms CreateObjectMapping: 1.277830 ms MarkObjects: 3.238197 ms  DeleteObjects: 0.029508 ms)
+Unloading 5 unused Assets to reduce memory usage. Loaded Objects now: 12884.
+Total: 5.861000 ms (FindLiveObjects: 0.522593 ms CreateObjectMapping: 0.993012 ms MarkObjects: 4.300490 ms  DeleteObjects: 0.043620 ms)
 
 [Singleton] Using instance already created: GameManager
  

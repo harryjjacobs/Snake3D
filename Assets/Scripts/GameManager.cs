@@ -10,6 +10,7 @@ public class GameManager : Singleton<GameManager> {
     public List<Level> levels;
     public GameObject playerPrefab;
     public GameObject foodPrefab;
+    public LevelGenerator levelGenerator;
     [Space]
     [Header("UI stuff")]
     public Text scoreText;
@@ -27,10 +28,12 @@ public class GameManager : Singleton<GameManager> {
     private static GameObject[] foodSpawnPoints;
 
 	void Start () {
-        LoadNextLevel();
+        //levelGenerator.Generate(0);
+        AudioManager.RegisterAudioSource("background_music_source", GetComponent<AudioSource>());
         LostPanel.SetActive(false);
         WonPanel.SetActive(false);
         QuitGameButton.SetActive(false);
+        LoadNextLevel();
     }
 	
     void Update()
@@ -64,6 +67,8 @@ public class GameManager : Singleton<GameManager> {
 
     public void LoadNextLevel()
     {
+        AudioManager.PlaySound("background_music_source", "background_music");
+
         WonPanel.SetActive(false);
         LostPanel.SetActive(false);
         CancelInvoke();
@@ -131,5 +136,10 @@ public class GameManager : Singleton<GameManager> {
     {
         currentLevel -= 1;
         LoadNextLevel();
+    }
+
+    public static float GetSnakeSpeed()
+    {
+        return Instance.levels[currentLevel].snakeSpeed;
     }
 }

@@ -14,35 +14,26 @@ public struct Turn
     }
 }
 
-public class Segment
-{
-    public Transform transform;
-    public Queue<Turn> turnPoints;
-
-    public Segment(Transform transform)
-    {
-        this.transform = transform;
-        turnPoints = new Queue<Turn>();
-    }
-}
-
 public class SnakeController : MonoBehaviour {
 
     public float moveRate = 1f;
     public float growDelay = 5f;
     public float segmentGapSize = 0.2f;
     public LayerMask ground;
-    public LayerMask enemy;
     public GameObject segmentPrefab;
 
     private float moveCounter = 0;
-    
     private bool horizontalReleased;
-    private bool turnsPending;
     private bool disableTurn;
+    private bool moveForwardFirst;
     private List<Segment> segments;
     private bool newSegmentAdded;
     private bool isDead;
+
+    void Awake()
+    {
+        AudioManager.RegisterAudioSource("snake", GetComponent<AudioSource>());
+    }
 
     void OnEnable()
     {
@@ -53,7 +44,7 @@ public class SnakeController : MonoBehaviour {
         {
             segments.Add(new Segment(transform.GetChild(i)));
         }
-        InvokeRepeating("AddSegment", 0, growDelay);
+        InvokeRepeating("AddSegment", growDelay, growDelay);
         Camera.main.GetComponent<SmoothFollow>().target = segments[0].transform;
         Camera.main.GetComponent<SmoothFollow>().JumpToTarget();
     }
@@ -75,16 +66,27 @@ public class SnakeController : MonoBehaviour {
         {
             horizontalReleased = true;
         }
-        else if (horizontalReleased && !turnsPending && !disableTurn)
+        //Do turning
+        else if (horizontalReleased && !disableTurn)
         {
             horizontalReleased = false;
-            turnsPending = true;
 
-            int direction = (int) Mathf.Clamp(hInput * 100, -1, 1);
+            if (moveForwardFirst)
+            {
+                DoTurns();
+                MoveAllSegmentsForward();
+                moveForwardFirst = false;
+            }
+
+            int direction = (int) Mathf.Clamp(hInput * 1000, -1, 1);
             float angle = 90 * direction;
             Vector3 position = segments[0].transform.position;
             Turn newTurn = new Turn(position, angle);
             AddTurnAtPoint(newTurn);
+            DoTurns();
+            MoveAllSegmentsForward();
+            moveCounter = 0;
+
         }
 
         //Do movement and turning
@@ -92,7 +94,6 @@ public class SnakeController : MonoBehaviour {
         {
             DoTurns();
             MoveAllSegmentsForward();
-            turnsPending = false;
             moveCounter = 0;
         }
         moveCounter += Time.deltaTime;
@@ -147,7 +148,7 @@ public class SnakeController : MonoBehaviour {
     {
         if (!segment.transform) return;
         segment.transform.position += segment.transform.forward;
-        segment.transform.position = Utilities.RoundToNearestInt(segment.transform.position, 1);
+        segment.transform.position = Utilities.RoundToNearest(segment.transform.position, 1);
 
         bool isAboveGround = IsThereGround(segment.transform.position, -segment.transform.up);
         if (!isAboveGround) segment.transform.Rotate(segment.transform.right, 90f, Space.World);
@@ -156,14 +157,21 @@ public class SnakeController : MonoBehaviour {
         {
             if (!isAboveGround)
             {
+                moveForwardFirst = true;
+            } else
+            {
+                moveForwardFirst = false;
+            }
+
+            //We are in a tunnel so cannot turn
+            if (IsThereGround(segment.transform.position, segment.transform.right) ||
+                IsThereGround(segment.transform.position, -segment.transform.right))
+            {
                 disableTurn = true;
             } else
             {
                 disableTurn = false;
             }
-
-            if (IsThereGround(segment.transform.position, segment.transform.right)) disableTurn = true;
-            if (IsThereGround(segment.transform.position, -segment.transform.right)) disableTurn = true;
         }
     }
 
@@ -243,6 +251,8 @@ public class SnakeController : MonoBehaviour {
         }
         else if (col.tag == "Food")
         {
+            //play sound
+            AudioManager.PlaySound("snake", "food_pickup");
             Destroy(col.gameObject);
             AddSegment();
             GameManager.Instance.scoreText.text = segments.Count + "/" + GameManager.maxScore;

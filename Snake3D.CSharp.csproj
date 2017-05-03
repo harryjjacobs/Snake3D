@@ -78,7 +78,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\AudioItem.cs" />
     <Compile Include="Assets\Scripts\AudioManager.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\Level.cs" />
@@ -88,6 +87,7 @@
     <Compile Include="Assets\Scripts\SmoothFollow.cs" />
     <Compile Include="Assets\Scripts\SnakeController.cs" />
     <Compile Include="Assets\Scripts\TitleScript.cs" />
+    <Compile Include="Assets\Scripts\UI.cs" />
     <Compile Include="Assets\Scripts\Utilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />

@@ -10,7 +10,6 @@ public class AudioManager : Singleton<AudioManager> {
 
     void Awake()
     {
-        Debug.Log("HAI!");
         audioSources = new Dictionary<string, AudioSource>();
         audioClips = new Dictionary<string, AudioClip>();
     }
@@ -36,6 +35,31 @@ public class AudioManager : Singleton<AudioManager> {
         }
     }
 
+    public static void SetMutedState(string audioSource, bool mute)
+    {
+        ToggleMute(audioSources[audioSource], mute);
+    }
+
+    public static void MuteAllAudio()
+    {
+        foreach (var item in audioSources)
+        {
+            ToggleMute(item.Value, true);
+        }
+    }
+
+    public static void UnmuteAllAudio()
+    {
+        foreach (var item in audioSources)
+        {
+            ToggleMute(item.Value, false);
+        }
+    }
+
+    static void ToggleMute(AudioSource audioSource, bool muted)
+    {
+        audioSource.mute = muted;
+    }
 
     static AudioClip GetAudioClip(string name)
     {

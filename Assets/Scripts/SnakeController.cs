@@ -175,17 +175,6 @@ public class SnakeController : MonoBehaviour {
         }
     }
 
-    bool IsThereGround(Vector3 position, Vector3 direction)
-    {
-        Ray ray = new Ray(position, direction);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 1f, ground))
-        {
-                return true;
-        }
-        return false;
-    }
-
     void TryNextTurn(Segment segment)
     {
         if (segment.turnPoints.Count == 0 || !segment.transform) return;
@@ -234,6 +223,35 @@ public class SnakeController : MonoBehaviour {
 
     }
 
+
+    bool IsThereGround(Vector3 position, Vector3 direction)
+    {
+        Ray ray = new Ray(position, direction);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 1f, ground))
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+    bool SegmentsOverlapping()
+    {
+        for (int i = 0; i < segments.Count; i++)
+        {
+            for (int j = 0; j < segments.Count; j++)
+            {
+                if (i == j) continue;
+                if (segments[i].transform.GetComponent<Collider>().bounds.Intersects(segments[j].transform.GetComponent<Collider>().bounds))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     void DoDeath()
     {
         isDead = true;
@@ -255,24 +273,9 @@ public class SnakeController : MonoBehaviour {
             AudioManager.PlaySound("snake", "food_pickup");
             Destroy(col.gameObject);
             AddSegment();
-            GameManager.Instance.scoreText.text = segments.Count + "/" + GameManager.maxScore;
+            UI.UpdateScore(segments.Count, GameManager.maxScore);
             GameManager.Instance.FoodSpawn();
         }
     }
 
-    bool SegmentsOverlapping()
-    {
-        for (int i = 0; i < segments.Count; i++)
-        {
-            for (int j = 0; j < segments.Count; j++)
-            {
-                if (i == j) continue;
-                if (segments[i].transform.GetComponent<Collider>().bounds.Intersects(segments[j].transform.GetComponent<Collider>().bounds))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }

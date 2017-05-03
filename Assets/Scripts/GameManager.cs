@@ -12,38 +12,31 @@ public class GameManager : Singleton<GameManager> {
     public GameObject foodPrefab;
     public LevelGenerator levelGenerator;
     [Space]
-    [Header("UI stuff")]
-    public Text scoreText;
-    public GameObject WonPanel;
-    public GameObject LostPanel;
-    public GameObject GameCompletePanel;
-    public GameObject QuitGameButton;
     #endregion
 
-    public static int currentLevel = -1;
-    public static int maxScore;
+    [HideInInspector] public static int currentLevel = -1;
+    [HideInInspector] public static int maxScore;
 
+    private bool soundsMuted;
     private static GameObject currentLevelInstance;
     private static GameObject playerInstance;
     private static GameObject[] foodSpawnPoints;
 
-	void Start () {
+    void Start () {
         //levelGenerator.Generate(0);
         AudioManager.RegisterAudioSource("background_music_source", GetComponent<AudioSource>());
-        LostPanel.SetActive(false);
-        WonPanel.SetActive(false);
-        QuitGameButton.SetActive(false);
+        UI.LostPanelVisiblility(false);
+        UI.WonPanelVisiblility(false);
         LoadNextLevel();
     }
 	
     void Update()
     {
-        //Toggle exit button
-        if (Input.GetKeyDown(KeyCode.Escape)) QuitGameButton.SetActive(!QuitGameButton.activeSelf);
+        
     }
 
 	public static void PlayerDied () {
-        Instance.LostPanel.SetActive(true);
+        UI.LostPanelVisiblility(true);
         if (playerInstance)
         {
             playerInstance.SetActive(false);
@@ -56,7 +49,7 @@ public class GameManager : Singleton<GameManager> {
         {
             playerInstance.SetActive(false);
         }
-        Instance.WonPanel.SetActive(true);
+        UI.WonPanelVisiblility(true);
     }
 
     public void ExitGame()
@@ -67,11 +60,9 @@ public class GameManager : Singleton<GameManager> {
 
     public void LoadNextLevel()
     {
-        AudioManager.PlaySound("background_music_source", "background_music");
+        UI.LostPanelVisiblility(false);
+        UI.WonPanelVisiblility(false);
 
-        WonPanel.SetActive(false);
-        LostPanel.SetActive(false);
-        CancelInvoke();
         if (currentLevel + 1 < Instance.levels.Count)
         {
             if (currentLevelInstance)
@@ -85,7 +76,7 @@ public class GameManager : Singleton<GameManager> {
             currentLevel += 1;
             currentLevelInstance = Instantiate(Instance.levels[currentLevel].prefab, Vector3.zero, Quaternion.identity);
             maxScore = Instance.levels[currentLevel].maxScore;
-            scoreText.text = "2/" + maxScore;
+            UI.UpdateScore(2, maxScore);
             foodSpawnPoints = GameObject.FindGameObjectsWithTag("FoodSpawnPoint");
             FoodSpawn();
             if (playerInstance == null)
@@ -107,11 +98,13 @@ public class GameManager : Singleton<GameManager> {
                 StartCoroutine(WaitUntilChildrenRemovedThenCallback(playerInstance.transform, 1, () => playerInstance.SetActive(true)));
             }
 
+            AudioManager.PlaySound("background_music_source", "background_music", Instance.levels[currentLevel].snakeSpeed / 8.064f);
 
-        } else
+        }
+        else
         {
             Debug.Log("Finished game");
-            GameCompletePanel.SetActive(true);
+            UI.ShowGameComplete();
         }
     }
 
@@ -142,4 +135,21 @@ public class GameManager : Singleton<GameManager> {
     {
         return Instance.levels[currentLevel].snakeSpeed;
     }
+
+
+    public bool SoundsMuted
+    {
+        get
+        {
+            return soundsMuted;
+        }
+
+        set
+        {
+            if (value) AudioManager.MuteAllAudio();
+            if (!value) AudioManager.UnmuteAllAudio();
+            soundsMuted = value;
+        }
+    }
+
 }
